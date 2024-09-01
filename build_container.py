@@ -95,11 +95,12 @@ class BuildContainer:
         # Install the dependencies
         print('[+] Installing dependencies in container ({} packages)'.format(len(self.deps)))
         apk_cmd = 'apk add {}\n'.format(' '.join(self.deps))
-        s.communicate(bytes(apk_cmd, encoding='utf-8'))
+        try:
+            s.communicate(bytes(apk_cmd, encoding='utf-8'), timeout=10)
+        except subprocess.TimeoutExpired as e:
+            print('[-] Installing packages in container timed out')
+            sys.exit(1)
 
-        # TODO: wait until we find the string "OK: " in the output so we know the packages are done installing
-        import time
-        time.sleep(10)
 
         # Create new image from container's changes
         print('[+] Generating new docker image')
