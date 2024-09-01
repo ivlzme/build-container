@@ -1,0 +1,6 @@
+vim
+bash
+flex
+bison
+make
+file
